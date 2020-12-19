@@ -36,16 +36,62 @@ public class EmployeePayrollDBService {
         Connection connection = this.getConnection();
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
-        while (resultSet.next())
-        {
-            int id = resultSet.getInt("id");
-            String name = resultSet.getString("name");
-            double salary = resultSet.getDouble("salary");
-            LocalDate startDate = resultSet.getDate("start").toLocalDate();
-            employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate));
-        }
+        employeePayrollList = this.getEmployeePayrollData(resultSet);
         connection.close();
         return employeePayrollList;
+    }
+
+    public List<EmployeePayrollData> getEmployeePayrollData(String name)
+    {
+        List<EmployeePayrollData> employeePayrollList = null;
+        if (this.employeePayrollDataStatement == null)
+            this.prepareStatementForEmployeeData();
+        try
+        {
+            employeePayrollDataStatement.setString(1, name);
+            ResultSet resultSet = employeePayrollDataStatement.executeQuery();
+            employeePayrollList = this.getEmployeePayrollData(resultSet);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return employeePayrollList;
+    }
+
+    private List<EmployeePayrollData> getEmployeePayrollData(ResultSet resultSet)
+    {
+        List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+        try
+        {
+            while (resultSet.next())
+            {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                double salary = resultSet.getDouble("salary");
+                LocalDate startDate = resultSet.getDate("start").toLocalDate();
+                employeePayrollList.add(new EmployeePayrollData(id, name, salary, startDate));
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return employeePayrollList;
+    }
+
+    private void prepareStatementForEmployeeData()
+    {
+        try
+        {
+            Connection connection =this.getConnection();
+            String sql = "SELECT * FROM employee_payroll WHERE name = ?";
+            employeePayrollDataStatement = connection.prepareStatement(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public int updateEmployeeData(String name, double salary)

@@ -35,13 +35,12 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch()
-    {
+    public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch() throws SQLException {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         employeePayrollService.updateEmployeeData("Terisa", 3000000.0);
-
-
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
+        Assert.assertTrue(result);
     }
 
 }

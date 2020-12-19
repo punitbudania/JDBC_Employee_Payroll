@@ -35,7 +35,7 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void given()
+    public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch()
     {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);

@@ -1,11 +1,8 @@
 package com.employeepayroll;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class EmployeePayrollService
 {
@@ -28,8 +25,6 @@ public class EmployeePayrollService
     {
         ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<>();
         EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
-        //Scanner consoleInputReader = new Scanner(System.in);
-        //employeePayrollService.readEmployeePayrollData(consoleInputReader);
         employeePayrollService.writeEmployeePayrollData(IOService.CONSOLE_IO);
     }
 

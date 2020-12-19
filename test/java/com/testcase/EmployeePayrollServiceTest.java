@@ -28,14 +28,16 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void givenEmployeePayrollDB_ShouldMatchDataCount() throws SQLException {
+    public void givenEmployeePayrollDB_ShouldMatchDataCount() throws SQLException
+    {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Assert.assertEquals(3, employeePayrollData.size());
     }
 
     @Test
-    public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch() throws SQLException {
+    public void givenNewSalaryForEmployee_WhenUpdated_ShouldMatch() throws SQLException
+    {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         employeePayrollService.updateEmployeeData("Terisa", 3000000.0);

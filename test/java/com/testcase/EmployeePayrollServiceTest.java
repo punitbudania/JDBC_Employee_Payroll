@@ -58,12 +58,22 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void givenany()
+    public void givenPayrollData_WhenAverageSalaryRetrievedByGender_ShouldReturnProperValue() throws SQLException {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String, Double> averageSalaryByGender = employeePayrollService.readAverageSalaryByGender(EmployeePayrollService.IOService.DB_IO);
+        Assert.assertTrue(averageSalaryByGender.get("M").equals(2000000.0) &&
+                            averageSalaryByGender.get("F").equals(3000000.0));
+    }
+
+    @Test
+    public void given()
     {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        Map<String, Double> averageSalaryByGender = employeePayrollService.readAverageSalaryByGender();
-        
+        employeePayrollService.addEmployeeTOPayroll("Mark", 5000000.0, LocalDate.now(), "M");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
+        Assert.assertTrue(result);
     }
 
 }

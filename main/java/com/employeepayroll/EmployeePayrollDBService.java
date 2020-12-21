@@ -3,7 +3,9 @@ package com.employeepayroll;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollDBService {
     private PreparedStatement employeePayrollDataStatement;
@@ -46,6 +48,28 @@ public class EmployeePayrollDBService {
         String sql = String.format("SELECT * FROM employee_payroll WHERE START BETWEEN '%s' AND '%s';",
                                     Date.valueOf(startDate), Date.valueOf(endDate));
         return this.getEmployeePayrollDataUsingDB(sql);
+    }
+
+    public Map<String, Double> getAverageSalaryByGender()
+    {
+        String sql = "SELECT gender, AVG(salary) as avg_salary FROM employee_payroll GROUP BY gender;";
+        Map<String, Double> genderToAverageSalaryMap = new HashMap<>();
+        try(Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+            {
+                String gender = resultSet.getString("gender");
+                double salary = resultSet.getDouble("avg_salary");
+                genderToAverageSalaryMap.put(gender, salary);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return genderToAverageSalaryMap;
     }
 
     private List<EmployeePayrollData> getEmployeePayrollDataUsingDB(String sql)
@@ -135,6 +159,30 @@ public class EmployeePayrollDBService {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public EmployeePayrollData addEmployeeToPayroll(String name, double salary, LocalDate startDate, String gender)
+    {
+        int employeeId = -1;
+        EmployeePayrollData employeePayrollData = null;
+        String sql = String.format("INSERT INTO employee_payroll (name, gender, salary, start)" +
+                            "VALUES ('%s', '%s', '%s', '%s')", name, gender, salary, Date.valueOf(startDate));
+        try(Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if(rowAffected == 1)
+            {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) employeeId = resultSet.getInt(1);
+            }
+            employeePayrollData = new EmployeePayrollData(employeeId, name, salary, startDate);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return employeePayrollData;
     }
 
 }

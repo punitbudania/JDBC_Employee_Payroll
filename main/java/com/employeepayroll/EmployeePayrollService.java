@@ -4,9 +4,15 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService
 {
+
+    public void addEmployeeTOPayroll(String name, double salary, LocalDate startDate, String gender)
+    {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, startDate, gender));
+    }
 
     public enum IOService{CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     public List<EmployeePayrollData> employeePayrollList;
@@ -42,6 +48,13 @@ public class EmployeePayrollService
     {
         if(ioService.equals(IOService.DB_IO))
             return employeePayrollDBService.getEmployeePayrollForDateRange(startDate, endDate);
+        return null;
+    }
+
+    public Map<String, Double> readAverageSalaryByGender(IOService ioService)
+    {
+        if(ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getAverageSalaryByGender();
         return null;
     }
 

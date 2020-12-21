@@ -48,7 +48,7 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void given() throws SQLException {
+    public void givenDateRange_WhenRetrieved_ShouldMatchEmployeeCount() throws SQLException {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         LocalDate startDate = LocalDate.of(2018, 01, 01);

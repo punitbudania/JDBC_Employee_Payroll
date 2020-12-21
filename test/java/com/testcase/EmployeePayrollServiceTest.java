@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollServiceTest
 {
@@ -59,6 +60,9 @@ public class EmployeePayrollServiceTest
     @Test
     public void givenany()
     {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String, Double> averageSalaryByGender = employeePayrollService.readAverageSalaryByGender();
         
     }
 

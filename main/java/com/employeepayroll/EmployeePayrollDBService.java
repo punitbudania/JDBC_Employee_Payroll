@@ -19,7 +19,7 @@ public class EmployeePayrollDBService {
 
     private Connection getConnection() throws SQLException
     {
-        String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service_db?useSSL=false";
+        String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
         String userName = "root";
         String password = "110016";
         Connection con;
@@ -38,6 +38,29 @@ public class EmployeePayrollDBService {
         ResultSet resultSet = statement.executeQuery(sql);
         employeePayrollList = this.getEmployeePayrollData(resultSet);
         connection.close();
+        return employeePayrollList;
+    }
+
+    public List<EmployeePayrollData> getEmployeePayrollForDateRange(LocalDate startDate, LocalDate endDate)
+    {
+        String sql = String.format("SELECT * FROM employee_payroll WHERE START BETWEEN '%s' AND '%s';",
+                                    Date.valueOf(startDate), Date.valueOf(endDate));
+        return this.getEmployeePayrollDataUsingDB(sql);
+    }
+
+    private List<EmployeePayrollData> getEmployeePayrollDataUsingDB(String sql)
+    {
+        List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+        try(Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            employeePayrollList = this.getEmployeePayrollData(resultSet);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
         return employeePayrollList;
     }
 
@@ -113,4 +136,5 @@ public class EmployeePayrollDBService {
         }
         return 0;
     }
+
 }

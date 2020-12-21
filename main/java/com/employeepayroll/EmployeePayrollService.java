@@ -1,11 +1,13 @@
 package com.employeepayroll;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeePayrollService
 {
+
     public enum IOService{CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     public List<EmployeePayrollData> employeePayrollList;
     private EmployeePayrollDBService employeePayrollDBService;
@@ -36,6 +38,12 @@ public class EmployeePayrollService
         return this.employeePayrollList;
     }
 
+    public List<EmployeePayrollData> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate)
+    {
+        if(ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getEmployeePayrollForDateRange(startDate, endDate);
+        return null;
+    }
 
     public boolean checkEmployeePayrollInSyncWithDB(String name)
     {

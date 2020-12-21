@@ -194,6 +194,7 @@ public class EmployeePayrollDBService {
         try
         {
             connection = this.getConnection();
+            connection.setAutoCommit(false);
         }
         catch (SQLException e)
         {
@@ -215,6 +216,12 @@ public class EmployeePayrollDBService {
         catch (SQLException e)
         {
             e.printStackTrace();
+            try {
+                connection.rollback();
+                return employeePayrollData;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
 
         try(Statement statement = connection.createStatement())
@@ -235,6 +242,26 @@ public class EmployeePayrollDBService {
         catch (SQLException e)
         {
             e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        try {
+            connection.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        finally
+        {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
         }
         return employeePayrollData;
     }

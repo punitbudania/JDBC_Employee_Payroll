@@ -67,8 +67,7 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void given()
-    {
+    public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws SQLException {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         employeePayrollService.addEmployeeTOPayroll("Mark", 5000000.0, LocalDate.now(), "M");

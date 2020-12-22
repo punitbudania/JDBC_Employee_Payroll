@@ -86,13 +86,13 @@ public class EmployeePayrollService
                     employeePayrollData.startDate, employeePayrollData.gender);
             System.out.println("Employee Added: " + employeePayrollData.name);
         });
-        System.out.println(this.employeePayrollList);
+        //System.out.println(this.employeePayrollList);
     }
 
     public void addEmployeeTOPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList)
     {
         Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
-        employeePayrollList.forEach(employeePayrollData -> {
+        employeePayrollDataList.forEach(employeePayrollData -> {
             Runnable task = () -> {
                 employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
                 System.out.println("Employee being added: " + Thread.currentThread().getName());
@@ -112,7 +112,7 @@ public class EmployeePayrollService
                 e.printStackTrace();
             }
         }
-        System.out.println(employeePayrollList);
+        System.out.println(employeePayrollDataList);
     }
 
     public void addEmployeeTOPayroll(String name, double salary, LocalDate startDate, String gender)

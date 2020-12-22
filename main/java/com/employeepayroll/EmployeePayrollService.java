@@ -8,10 +8,9 @@ import java.util.Map;
 
 public class EmployeePayrollService
 {
-
-    public void addEmployeeTOPayroll(String name, double salary, LocalDate startDate, String gender)
+    public void addEmployeeTOPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList)
     {
-        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, startDate, gender));
+
     }
 
     public enum IOService{CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
@@ -80,6 +79,22 @@ public class EmployeePayrollService
                 .findFirst()
                 .orElse(null);
         return employeePayrollData;
+    }
+
+    public void addEmployeeTOPayroll(List<EmployeePayrollData> employeePayrollDataList)
+    {
+        employeePayrollDataList.forEach(employeePayrollData -> {
+            System.out.println("Employee being added: " + employeePayrollData.name);
+            this.addEmployeeTOPayroll(employeePayrollData.name, employeePayrollData.salary,
+                    employeePayrollData.startDate, employeePayrollData.gender);
+            System.out.println("Employee Added: " + employeePayrollData.name);
+        });
+        System.out.println(this.employeePayrollList);
+    }
+
+    public void addEmployeeTOPayroll(String name, double salary, LocalDate startDate, String gender)
+    {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, startDate, gender));
     }
 
     public void writeEmployeePayrollData(IOService ioService)

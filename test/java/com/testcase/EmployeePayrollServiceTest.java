@@ -6,6 +6,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -75,4 +77,27 @@ public class EmployeePayrollServiceTest
         Assert.assertTrue(result);
     }
 
+    @Test
+    public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeEntries() throws SQLException {
+        EmployeePayrollData[] arrayOfEmps = {
+                new EmployeePayrollData(0, "Jeff Bezos", "M", 100000.0, LocalDate.now()),
+                new EmployeePayrollData(0, "Bill Gates", "M", 200000.0, LocalDate.now()),
+                new EmployeePayrollData(0, "Mark Zuckerberg", "M", 300000.0, LocalDate.now()),
+                new EmployeePayrollData(0, "Sundar", "M", 600000.0, LocalDate.now()),
+                new EmployeePayrollData(0, "Mukesh", "M", 100000.0, LocalDate.now()),
+                new EmployeePayrollData(0, "Anil", "M", 200000.0, LocalDate.now()),
+        };
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Instant start = Instant.now();
+        employeePayrollService.addEmployeeTOPayroll(Arrays.asList(arrayOfEmps));
+        Instant end = Instant.now();
+        System.out.println("Duration without thread" + Duration.between(start, end));
+        Instant threadStart = Instant.now();
+        employeePayrollService.addEmployeeTOPayrollWithThreads(Arrays.asList(arrayOfEmps));
+        Instant threadEnd = Instant.now();
+        System.out.println("Duration with thread" + Duration.between(threadStart, threadEnd));
+
+        Assert.assertEquals(7, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
+    }
 }

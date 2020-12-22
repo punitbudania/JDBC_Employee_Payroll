@@ -5,10 +5,17 @@ import java.util.Objects;
 
 public class EmployeePayrollData
 {
-    public String gender;
     public int id;
     public String name;
+    public String gender;
     public double salary;
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(name, gender, salary, startDate);
+    }
+
     public LocalDate startDate;
 
     public EmployeePayrollData(Integer id, String name, Double salary)

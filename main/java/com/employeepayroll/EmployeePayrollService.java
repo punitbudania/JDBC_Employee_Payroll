@@ -3,15 +3,12 @@ package com.employeepayroll;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class EmployeePayrollService
 {
-    public void addEmployeeTOPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList)
-    {
-
-    }
 
     public enum IOService{CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     public List<EmployeePayrollData> employeePayrollList;
@@ -92,6 +89,32 @@ public class EmployeePayrollService
         System.out.println(this.employeePayrollList);
     }
 
+    public void addEmployeeTOPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList)
+    {
+        Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+        employeePayrollList.forEach(employeePayrollData -> {
+            Runnable task = () -> {
+                employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+                System.out.println("Employee being added: " + Thread.currentThread().getName());
+                this.addEmployeeTOPayroll(employeePayrollData.name, employeePayrollData.salary,
+                        employeePayrollData.startDate, employeePayrollData.gender);
+                employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+                System.out.println("Employee added: " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, employeePayrollData.name);
+            thread.start();
+        });
+        while (employeeAdditionStatus.containsValue(false))
+        {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(employeePayrollList);
+    }
+
     public void addEmployeeTOPayroll(String name, double salary, LocalDate startDate, String gender)
     {
         employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, startDate, gender));
@@ -115,6 +138,7 @@ public class EmployeePayrollService
         {
             new EmployeePayrollFileIOService().printData();
         }
+        else System.out.println(employeePayrollList);
     }
 
     public long countEntries(IOService ioService)
@@ -123,7 +147,7 @@ public class EmployeePayrollService
         {
             return new EmployeePayrollFileIOService().countEntries();
         }
-        return 0;
+        return employeePayrollList.size();
     }
 
     public List<String> readData(IOService ioService)

@@ -301,7 +301,6 @@ public class EmployeePayrollDBService {
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if(resultSet.next()) employeeID = resultSet.getInt(1);
             }
-            //employeePayrollData = new EmployeePayrollData(employeeID, name, salary, startDate);
         }
         catch (SQLException throwables)
         {
@@ -380,5 +379,36 @@ public class EmployeePayrollDBService {
             }
         }
         return employeePayrollData;
+    }
+
+    public void removeEmployeeFromDB(String name)
+    {
+        String sql = String.format("UPDATE employee_payroll SET is_active = false WHERE name = '%s'", name);
+        try(Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+    }
+
+    public int countActiveEmployees()
+    {
+        int count = -1;
+        String sql = "SELECT SUM(is_active) FROM employee_payroll";
+        try(Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            if(resultSet.next()) count = resultSet.getInt(1);
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return count;
     }
 }

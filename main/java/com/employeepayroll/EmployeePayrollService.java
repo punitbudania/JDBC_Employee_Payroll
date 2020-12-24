@@ -124,6 +124,16 @@ public class EmployeePayrollService
         employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, salary, startDate, gender));
     }
 
+    public void removeEmployeeFromDB(String name)
+    {
+        employeePayrollDBService.removeEmployeeFromDB(name);
+    }
+
+    public int countActiveEmployees()
+    {
+        return employeePayrollDBService.countActiveEmployees();
+    }
+
     public void writeEmployeePayrollData(IOService ioService)
     {
         if(ioService.equals(IOService.CONSOLE_IO))

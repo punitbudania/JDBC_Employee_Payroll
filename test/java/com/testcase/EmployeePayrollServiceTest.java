@@ -77,6 +77,8 @@ public class EmployeePayrollServiceTest
         Assert.assertTrue(result);
     }
 
+
+
     @Test
     public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeEntries() throws SQLException
     {
@@ -103,8 +105,12 @@ public class EmployeePayrollServiceTest
     }
 
     @Test
-    public void given()
+    public void givenEmployee_WhenAdded_ShouldAddedToAllTables() throws SQLException
     {
-
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToDatabase("CapG", "Rohit", "M", 1000000.0, LocalDate.now(),"IT");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Rohit");
+        Assert.assertTrue(result);
     }
 }

@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class EmployeePayrollService
 {
-
     public enum IOService{CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     public List<EmployeePayrollData> employeePayrollList;
     private EmployeePayrollDBService employeePayrollDBService;
@@ -113,6 +112,11 @@ public class EmployeePayrollService
             }
         }
         System.out.println(employeePayrollDataList);
+    }
+
+    public void addEmployeeToDatabase(String company, String name, String gender, double salary, LocalDate startDate, String department)
+    {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToDatabase(company, name, gender, salary, startDate, department));
     }
 
     public void addEmployeeTOPayroll(String name, double salary, LocalDate startDate, String gender)

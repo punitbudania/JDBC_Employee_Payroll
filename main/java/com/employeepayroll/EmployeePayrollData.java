@@ -9,14 +9,15 @@ public class EmployeePayrollData
     public String name;
     public String gender;
     public double salary;
+    public LocalDate startDate;
+    //public String company;
+    //public String department;
 
     @Override
     public int hashCode()
     {
         return Objects.hash(name, gender, salary, startDate);
     }
-
-    public LocalDate startDate;
 
     public EmployeePayrollData(Integer id, String name, Double salary)
     {
@@ -36,6 +37,15 @@ public class EmployeePayrollData
         this(id, name, salary, startDate);
         this.gender = gender;
     }
+    /*
+    public EmployeePayrollData(int id, String name, String gender, double salary, LocalDate startDate, String company, String department)
+    {
+        this(id, name, gender, salary, startDate);
+        this.company = company;
+        this.department = department;
+    }
+
+     */
 
     @Override
     public String toString()

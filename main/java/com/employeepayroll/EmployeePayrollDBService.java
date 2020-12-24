@@ -12,6 +12,8 @@ public class EmployeePayrollDBService {
     private PreparedStatement employeePayrollDataStatement;
     private static EmployeePayrollDBService employeePayrollDBService;
     private EmployeePayrollDBService() {}
+    HashMap<String, Integer> departments = new HashMap<>();
+
 
     public static EmployeePayrollDBService getInstance()
     {
@@ -254,6 +256,114 @@ public class EmployeePayrollDBService {
                 throwables.printStackTrace();
             }
         }
+        try {
+            connection.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        finally
+        {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+        return employeePayrollData;
+    }
+
+    public EmployeePayrollData addEmployeeToDatabase(String company, String name, String gender, double salary, LocalDate startDate, String department)
+    {
+        departments.put("IT", 1);
+        departments.put("HR", 2);
+        int employeeID = -1;
+        Connection connection = null;
+        EmployeePayrollData employeePayrollData = null;
+        try
+        {
+            connection = this.getConnection();
+            connection.setAutoCommit(false);
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        try (Statement statement = connection.createStatement())
+        {
+            String sql = String.format("INSERT INTO employee_payroll (company, name, gender, salary, start)" +
+                    "VALUES ('%s', '%s', '%s', '%s', '%s')", company, name, gender, salary, Date.valueOf(startDate));
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if(rowAffected == 1)
+            {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next()) employeeID = resultSet.getInt(1);
+            }
+            //employeePayrollData = new EmployeePayrollData(employeeID, name, salary, startDate);
+        }
+        catch (SQLException throwables)
+        {
+            throwables.printStackTrace();
+            try {
+                connection.rollback();
+                return employeePayrollData;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try(Statement statement = connection.createStatement())
+        {
+            double deductions = salary*0.2;
+            double taxablePay = salary - deductions;
+            double tax = taxablePay*0.1;
+            double netPay = salary - tax;
+            String sql = String.format("INSERT INTO payroll_details" +
+                    "(employee_id, basic_pay, deductions, taxable_pay, tax, net_pay) VALUES" +
+                    "(%s, %s, %s, %s, %s, %s)", employeeID, salary, deductions, taxablePay, tax, netPay);
+            statement.executeUpdate(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+                return employeePayrollData;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        try (Statement statement = connection.createStatement())
+        {
+            int dept_id = -1;
+            for (String i : departments.keySet())
+            {
+                if(i == department)
+                {
+                    dept_id = departments.get(i);
+                }
+            }
+            String sql = String.format("INSERT INTO employee_department (employee_id, department_id) VALUES (%s, %s)", employeeID, dept_id);
+            int rowAffected = statement.executeUpdate(sql);
+            if(rowAffected == 1)
+            {
+                employeePayrollData = new EmployeePayrollData(employeeID, name, salary, startDate);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+                return employeePayrollData;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
         try {
             connection.commit();
         } catch (SQLException throwables) {

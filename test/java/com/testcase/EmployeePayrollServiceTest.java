@@ -77,7 +77,24 @@ public class EmployeePayrollServiceTest
         Assert.assertTrue(result);
     }
 
+    @Test
+    public void givenEmployee_WhenAdded_ShouldAddedToAllTables() throws SQLException
+    {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToDatabase("CapG", "Rohit", "M", 1000000.0, LocalDate.now(),"IT");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Rohit");
+        Assert.assertTrue(result);
+    }
 
+    @Test
+    public void givenEmployee_WhenRemoved_ShouldReturnUpdatedCount() throws SQLException {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.removeEmployeeFromDB("Mark");
+        int result = employeePayrollService.countActiveEmployees();
+        Assert.assertEquals(1, result);
+    }
 
     @Test
     public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeEntries() throws SQLException
@@ -104,22 +121,25 @@ public class EmployeePayrollServiceTest
         Assert.assertEquals(13, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
     }
 
-    @Test
-    public void givenEmployee_WhenAdded_ShouldAddedToAllTables() throws SQLException
-    {
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.addEmployeeToDatabase("CapG", "Rohit", "M", 1000000.0, LocalDate.now(),"IT");
-        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Rohit");
-        Assert.assertTrue(result);
-    }
 
     @Test
-    public void givenEmployee_WhenRemoved_ShouldReturnUpdatedCount() throws SQLException {
+    public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeCount() throws SQLException
+    {
+        EmployeePayrollData[] arrayOfEmps = {
+                new EmployeePayrollData(0, "Jeff Bezos", "M", 100000.0, LocalDate.now(), "Amazon", "IT"),
+                new EmployeePayrollData(0, "Bill Gates", "M", 200000.0, LocalDate.now(), "Microsoft", "HR"),
+        };
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.removeEmployeeFromDB("Mark");
-        int result = employeePayrollService.countActiveEmployees();
-        Assert.assertEquals(1, result);
+        Instant start = Instant.now();
+        employeePayrollService.addEmployeeToDB(Arrays.asList(arrayOfEmps));
+        Instant end = Instant.now();
+        System.out.println("Duration without thread" + Duration.between(start, end));
+        Instant threadStart = Instant.now();
+        employeePayrollService.addEmployeeToDBWithThreads(Arrays.asList(arrayOfEmps));
+        Instant threadEnd = Instant.now();
+        System.out.println("Duration with thread" + Duration.between(threadStart, threadEnd));
+        employeePayrollService.printData(EmployeePayrollService.IOService.DB_IO);
+        Assert.assertEquals(3, employeePayrollService.countActiveEmployees());
     }
 }

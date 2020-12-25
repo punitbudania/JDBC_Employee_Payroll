@@ -200,7 +200,7 @@ public class EmployeePayrollService
         while (employeeAdditionStatus.containsValue(false))
         {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -208,5 +208,41 @@ public class EmployeePayrollService
         System.out.println(employeePayrollDataList);
     }
 
+    public void updateEmployeeSalary(HashMap<Integer, Double> updatedSalaries)
+    {
+        HashMap<Integer, Boolean> updateStatus = new HashMap<>();
+        updatedSalaries.entrySet().forEach(entry -> {
+            int id = entry.getKey();
+            double salary = entry.getValue();
+            Runnable task = () -> {
+                updateStatus.put(id, false);
+                System.out.println("Updating salary of " + Thread.currentThread().getName());
+                updatePayrollDetails(id, salary);
+                updateEmployeePayroll(id, salary);
+                System.out.println("Updated salary of " + Thread.currentThread().getName());
+                updateStatus.put(id, true);
+            };
+            Thread thread = new Thread(task, String.valueOf(id));
+            thread.start();
+        });
+        while (updateStatus.containsValue(false))
+        {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updatePayrollDetails(int id, double salary)
+    {
+        employeePayrollDBService.updatePayrollDetails(id, salary);
+    }
+
+    private void updateEmployeePayroll(int id, double salary)
+    {
+        employeePayrollDBService.updateEmployeePayroll(id, salary);
+    }
 
 }

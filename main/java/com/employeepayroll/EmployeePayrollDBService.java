@@ -169,6 +169,14 @@ public class EmployeePayrollDBService {
         return 0;
     }
 
+    /*
+    public void updateEmployeeSalary(String name, double salary)
+    {
+
+    }
+
+     */
+
     public EmployeePayrollData addEmployeeToPayrollUC7(String name, double salary, LocalDate startDate, String gender)
     {
         int employeeId = -1;
@@ -410,5 +418,34 @@ public class EmployeePayrollDBService {
             throwables.printStackTrace();
         }
         return count;
+    }
+
+    public void updatePayrollDetails(int id, double salary)
+    {
+        String sql = String.format("update payroll_details set basic_pay = %.2f where employee_id = %s", salary, id);
+        try (Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateEmployeePayroll(int id, double salary)
+    {
+        String sql = String.format("update employee_payroll set salary = %.2f where id = %s", salary, id);
+        try (Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }

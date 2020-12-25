@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -123,11 +124,11 @@ public class EmployeePayrollServiceTest
 
 
     @Test
-    public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeCount() throws SQLException
+    public void given2Employees_WhenAddedToDB_ShouldMatchEmployeeCount() throws SQLException
     {
         EmployeePayrollData[] arrayOfEmps = {
-                new EmployeePayrollData(0, "Jeff Bezos", "M", 100000.0, LocalDate.now(), "Amazon", "IT"),
-                new EmployeePayrollData(0, "Bill Gates", "M", 200000.0, LocalDate.now(), "Microsoft", "HR"),
+                new EmployeePayrollData(0, "Jeff Bezos", "M", 1000000.0, LocalDate.now(), "Amazon", "IT"),
+                new EmployeePayrollData(0, "Bill Gates", "M", 2000000.0, LocalDate.now(), "Microsoft", "HR"),
         };
         EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
@@ -140,6 +141,17 @@ public class EmployeePayrollServiceTest
         Instant threadEnd = Instant.now();
         System.out.println("Duration with thread" + Duration.between(threadStart, threadEnd));
         employeePayrollService.printData(EmployeePayrollService.IOService.DB_IO);
+        Assert.assertEquals(3, employeePayrollService.countActiveEmployees());
+    }
+
+    @Test
+    public void givenSalary_WhenUpdated_ShouldMatchUpdatedSalary() throws SQLException {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        HashMap<Integer, Double> updatedSalaries = new HashMap<>();
+        updatedSalaries.put(86, 1500000.0);
+        updatedSalaries.put(87, 2500000.0);
+        employeePayrollService.updateEmployeeSalary(updatedSalaries);
         Assert.assertEquals(3, employeePayrollService.countActiveEmployees());
     }
 }

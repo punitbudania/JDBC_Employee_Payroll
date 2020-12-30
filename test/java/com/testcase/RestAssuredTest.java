@@ -18,12 +18,6 @@ public class RestAssuredTest
         RestAssured.port = 3000;
     }
 
-    public Response getEmployeeList()
-    {
-        Response response = RestAssured.get("/employees/list");
-        return response;
-    }
-
     @Test
     public void givenNewEmployee_OnPost_ShouldReturnAddedEmployee()
     {
@@ -52,5 +46,14 @@ public class RestAssuredTest
         String respAsStr = response.asString();
         response.then().body("name", Matchers.is("Lisa"));
         response.then().body("salary", Matchers.is("8000"));
+    }
+
+    @Test
+    public void onCalling_ReturnEmployeeList()
+    {
+        Response response = RestAssured.get("/employees");
+        System.out.println("AT FIRST: " + response.asString());
+        response.then().body("id", Matchers.hasItems(1, 2, 3));
+        response.then().body("name", Matchers.hasItems("Lisa"));
     }
 }

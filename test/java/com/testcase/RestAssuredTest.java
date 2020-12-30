@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,5 +57,16 @@ public class RestAssuredTest
         System.out.println("AT FIRST: " + response.asString());
         response.then().body("id", Matchers.hasItems(1, 2, 3));
         response.then().body("name", Matchers.hasItems("Lisa"));
+    }
+
+    @Test
+    public  void givenEmployeeId_OnDelete_ShouldReturnSuccessStatus()
+    {
+        Response response = RestAssured.delete("/employees/1");
+        String respAsStr = response.asString();
+        int statusCode = response.getStatusCode();
+        MatcherAssert.assertThat(statusCode, CoreMatchers.is(200));
+        response = RestAssured.get("/employees");
+        response.then().body("id", Matchers.not(1));
     }
 }

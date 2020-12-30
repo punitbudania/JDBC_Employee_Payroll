@@ -9,6 +9,16 @@
       "name": "Lisa",
       "salary": "8000",
       "id": 3
+    },
+    {
+      "name": "Salman",
+      "salary": "5000.0",
+      "id": 4
+    },
+    {
+      "name": "Ajit",
+      "salary": "4000.0",
+      "id": 5
     }
   ]
 }

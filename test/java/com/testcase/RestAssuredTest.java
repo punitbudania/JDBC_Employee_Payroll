@@ -43,6 +43,14 @@ public class RestAssuredTest
     @Test
     public void givenEmployee_OnUpdate_ShouldReturnUpdatedEmployee()
     {
-
+        Response response = RestAssured.given()
+                            .contentType(ContentType.JSON)
+                            .accept(ContentType.JSON)
+                            .body("{\"name\": \"Lisa\", \"salary\": \"8000\"}")
+                            .when()
+                            .put("/employees/3");
+        String respAsStr = response.asString();
+        response.then().body("name", Matchers.is("Lisa"));
+        response.then().body("salary", Matchers.is("8000"));
     }
 }
